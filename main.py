@@ -31,39 +31,46 @@ class PitcherState:
     def successors(self):
         successors = []
 
-        # Option 1: Fill water in 1 jug then transfer to infinite pitcher
+        # Operation 1: Fill water to empty jug[i]
 
         for i in range(len(self.pitchers)-1):
             # Fill jug i
             new_pitchers = self.pitchers.copy()
             if new_pitchers[i] == 0:
-                print("1a. new_pitchers")
-                print(new_pitchers)
+                # print("1a. new_pitchers")
+                # print(new_pitchers)
                 new_pitchers[i] = capacities[i]
-                print("1b. new_pitchers")
-                print(new_pitchers)
+                # print("1b. new_pitchers")
+                # print(new_pitchers)
                 successors.append(PitcherState(new_pitchers, self, 1, self.heuristic(new_pitchers)))
                 # print("in here 1")
+
+        # Operation 2: Empty jug[i] into infinite_pitcher
 
         for i in range(len(self.pitchers)-1):
             # Empty jug i into infinite_pitcher
             new_pitchers = self.pitchers.copy()
             if new_pitchers[i] != 0 and new_pitchers[-1] + new_pitchers[i] <= target * 10:
-                print("2a. new_pitchers")
-                print(new_pitchers)
+                # print("2a. new_pitchers")
+                # print(new_pitchers)
                 new_pitchers[-1] += new_pitchers[i]
                 new_pitchers[i] = 0
                 successors.append(PitcherState(new_pitchers, self, 1, self.heuristic(new_pitchers)))
-                print("2b. new_pitchers")
-                print(new_pitchers)
+                # print("2b. new_pitchers")
+                # print(new_pitchers)
                 # print("in here 2")
                 # print("0. after filling")
                 # print(successors[-1])
 
-        # Option 2: Fill water in 1 jug
-        #           then transfer from bigger jug to smaller jug
-        #           then transfer water to infinite pitcher
+        # Operation 3: Empty jug[i] to the ground
+        for x in range(len(self.pitchers)-1):
+            new_pitchers = self.pitchers.copy()
+            if new_pitchers[x] != 0:
+                new_pitchers[x] = 0
+                successors.append(PitcherState(new_pitchers, self, 1, self.heuristic(new_pitchers)))
 
+
+        # Operation 4: Transfer water from full jug[y] to empty jug[x]
         # Transfer water from jug y to jug x
         # x = 0 (jug x is empty)
         # y > x (jug y currently holds more water than jug x)
@@ -92,28 +99,25 @@ class PitcherState:
                 for x in range(y):
                     # water transfer algorithm
                     # if new_pitchers[y] > new_pitchers[x]:
+                    # steps = 0
                     # if new_pitchers[x] != 0:
-                    #     new_pitchers[x] = 0
-                    # print("new_pitchers[x]: " + str(new_pitchers[x]))
-                    steps = 0
-                    if new_pitchers[x] != 0:
-                        new_pitchers[x] =0
-                        steps += 1
-                        print("Empty out water: steps = " + str(steps))
+                    #     new_pitchers[x] =0
+                    #     steps += 1
+                    #     print("Empty out water: steps = " + str(steps))
 
                     # Transfer water from pitcher y to pitcher x
-                    #if new_pitchers[x] == 0:
-                    new_pitchers[x] = capacities[x]
-                    new_pitchers[y] -= capacities[x]
-                    steps += 2
-                    successors.append(PitcherState(new_pitchers, self, steps, self.heuristic(new_pitchers)))
-                    # new_pitchers[-1] += new_pitchers[y]
-                    # new_pitchers[y] = 0
-                    # # print("new_pitchers after")
-                    # # print(new_pitchers)
-                    # successors.append(PitcherState(new_pitchers, self, 1, self.heuristic(new_pitchers)))
-                    print("Transfering water: steps = " + str(steps))
-                    break
+                    if new_pitchers[x] == 0:
+                        new_pitchers[x] = capacities[x]
+                        new_pitchers[y] -= capacities[x]
+                        # steps += 2
+                        successors.append(PitcherState(new_pitchers, self, 1, self.heuristic(new_pitchers)))
+                        # new_pitchers[-1] += new_pitchers[y]
+                        # new_pitchers[y] = 0
+                        # # print("new_pitchers after")
+                        # # print(new_pitchers)
+                        # successors.append(PitcherState(new_pitchers, self, 1, self.heuristic(new_pitchers)))
+                        # print("Transfering water: steps = " + str(1))
+                        break
                 # print("===========================================")
 
         # End
@@ -217,7 +221,7 @@ def read_input_file(file_path):
 def main():
     global capacities
     global target
-    file_path = 'input/input9.txt'  # Adjust this to your file path
+    file_path = 'input/input8.txt'  # Adjust this to your file path
 
     capacities, target = read_input_file(file_path)
     capacities = sorted(capacities)
