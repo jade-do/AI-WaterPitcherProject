@@ -25,9 +25,6 @@ class PitcherState:
     def is_goal(self):
         return self.pitchers[-1] == target
 
-    def heuristic(self):
-        return abs(target - self.pitchers[-1])
-
     def heuristic(self, new_pitchers):
         return abs(target - new_pitchers[-1])
 
@@ -40,29 +37,28 @@ class PitcherState:
             # Fill jug i
             new_pitchers = self.pitchers.copy()
             if new_pitchers[i] == 0:
+                print("1a. new_pitchers")
+                print(new_pitchers)
                 new_pitchers[i] = capacities[i]
-                pitcher_state_parent = PitcherState(new_pitchers, self, 1, self.heuristic(new_pitchers))
-                #print("1. pitcher_state_parent")
-                #print(pitcher_state_parent)
-                successors.append(pitcher_state_parent)
-                #print_path(successors)
+                print("1b. new_pitchers")
+                print(new_pitchers)
+                successors.append(PitcherState(new_pitchers, self, 1, self.heuristic(new_pitchers)))
+                # print("in here 1")
 
+        for i in range(len(self.pitchers)-1):
+            # Empty jug i into infinite_pitcher
+            new_pitchers = self.pitchers.copy()
+            if new_pitchers[i] != 0 and new_pitchers[-1] + new_pitchers[i] <= target * 10:
+                print("2a. new_pitchers")
+                print(new_pitchers)
                 new_pitchers[-1] += new_pitchers[i]
                 new_pitchers[i] = 0
-                pitcher_state_child = PitcherState(new_pitchers, pitcher_state_parent, 1, self.heuristic(new_pitchers))
-                #print("2. pitcher_state_child")
-                #print(pitcher_state_child)
-                #print(pitcher_state_child.parent)
-                successors.append(pitcher_state_child)
-                #print_path(successors)
-
-        # for i in range(len(self.pitchers)-1):
-        #     # Empty jug i into infinite_pitcher
-        #     new_pitchers = self.pitchers.copy()
-        #     if new_pitchers[i] != 0:
-        #         new_pitchers[-1] += new_pitchers[i]
-        #         new_pitchers[i] = 0
-        #         successors.append(PitcherState(new_pitchers, self, 1, self.heuristic()))
+                successors.append(PitcherState(new_pitchers, self, 1, self.heuristic(new_pitchers)))
+                print("2b. new_pitchers")
+                print(new_pitchers)
+                # print("in here 2")
+                # print("0. after filling")
+                # print(successors[-1])
 
         # Option 2: Fill water in 1 jug
         #           then transfer from bigger jug to smaller jug
@@ -74,21 +70,83 @@ class PitcherState:
         # jug y only fills 1 jug x at the moment
         # will develop algo to fill iteratively more jug x
         #   e.g. 2, 3, 4, 5, .. y - 1
-        # for y in range(len(self.pitchers)-2, -1, -1):
-        #     # Fill jug y
+        # Start
+        for y in range(len(self.pitchers) - 2, -1, -1):
+            new_pitchers = self.pitchers.copy()
+            # if new_pitchers[y] == 0:
+            if new_pitchers[y] == capacities[y]:
+                # new_pitchers = self.pitchers.copy()
+                # new_pitchers[y] = capacities[y]
+                # print("1.")
+                # print(new_pitchers)
+                # successors.append(PitcherState(new_pitchers, self, 1, self.heuristic(new_pitchers)))
+                # print("in here 3")
+                # print("===========================================")
+                # print("capacities: ")
+                # print(capacities)
+                # print("new_pitchers: ")
+                # print(new_pitchers)
+                # print("new_pitchers[y]: " + str(new_pitchers[y]))
+                # print("capacities[y]: " + str(capacities[y]))
+
+                for x in range(y):
+                    # water transfer algorithm
+                    # if new_pitchers[y] > new_pitchers[x]:
+                    # if new_pitchers[x] != 0:
+                    #     new_pitchers[x] = 0
+                    # print("new_pitchers[x]: " + str(new_pitchers[x]))
+                    steps = 0
+                    if new_pitchers[x] != 0:
+                        new_pitchers[x] =0
+                        steps += 1
+                        print("Empty out water: steps = " + str(steps))
+
+                    # Transfer water from pitcher y to pitcher x
+                    #if new_pitchers[x] == 0:
+                    new_pitchers[x] = capacities[x]
+                    new_pitchers[y] -= capacities[x]
+                    steps += 2
+                    successors.append(PitcherState(new_pitchers, self, steps, self.heuristic(new_pitchers)))
+                    # new_pitchers[-1] += new_pitchers[y]
+                    # new_pitchers[y] = 0
+                    # # print("new_pitchers after")
+                    # # print(new_pitchers)
+                    # successors.append(PitcherState(new_pitchers, self, 1, self.heuristic(new_pitchers)))
+                    print("Transfering water: steps = " + str(steps))
+                    break
+                # print("===========================================")
+
+        # End
+
+        # Start
+        # for y in range(len(self.pitchers) - 2, -1, -1):
+        #     new_pitchers = self.pitchers.copy()
         #     if new_pitchers[y] == 0:
-        #         new_pitchers = self.pitchers.copy()
+        #     # if new_pitchers[y] == capacities[y]:
+        #         # new_pitchers = self.pitchers.copy()
         #         new_pitchers[y] = capacities[y]
+        #         # print("1.")
+        #         # print(new_pitchers)
         #         successors.append(PitcherState(new_pitchers, self, 1, self.heuristic(new_pitchers)))
+        #         # print("in here 3")
         #
         #         for x in range(y):
         #             # water transfer algorithm
-        #             if new_pitchers[y] > capacities[x]:
-        #                 new_pitchers[x] = capacities[x]
-        #                 new_pitchers[y] = new_pitchers[y] - new_pitchers[x]
-        #                 break
-        #             successors.append(PitcherState(new_pitchers, self, 1, self.heuristic(new_pitchers)))
+        #             if new_pitchers[y] > new_pitchers[x]:
+        #             # if new_pitchers[x] != 0:
+        #             #     new_pitchers[x] = 0
         #
+        #             # if new_pitchers[x] == 0:
+        #                 new_pitchers[x] = capacities[x]
+        #                 new_pitchers[y] -= capacities[x]
+        #                 successors.append(PitcherState(new_pitchers, self, 1, self.heuristic(new_pitchers)))
+        #                 new_pitchers[-1] += new_pitchers[y]
+        #                 new_pitchers[y] = 0
+        #                 successors.append(PitcherState(new_pitchers, self, 1, self.heuristic(new_pitchers)))
+        #                 break
+
+        # End
+
         # for i in range(len(self.pitchers)-1):
         #     # Empty jug i into infinite_pitcher
         #     new_pitchers = self.pitchers.copy()
@@ -111,36 +169,38 @@ def a_star_search(initial_state):
     came_from = {initial_state: None}
     cost_so_far = {initial_state: 0}
 
-    loop_count = 0
-
     while not frontier.empty():
         _, current_state = frontier.get()
-        print("Current state: ")
-        print(current_state)
 
         if current_state.is_goal():
             # Reconstruct path
-            # print("goal: " + str(current_state.infinite_pitcher))
             print("Found goal! \n Path is: \n")
             path = []
+            # total_steps = 0
+            total_steps = 0
             while current_state != initial_state:
                 path.append(current_state)
-                current_state = came_from[current_state]
                 # current_state = current_state.parent
+                current_state = came_from[current_state]
+                total_steps += current_state.g
             path.append(initial_state)
             path.reverse()
             print_path(path)
-            return len(path) - 1  # Number of steps excluding the initial state
+            return total_steps
+            # return len(path) - 1  # Number of steps excluding the initial state
 
+        # print("current_state: ")
+        # print(current_state)
 
         for next_state in current_state.successors():
-            print("Next_state: ")
-            print(next_state)
+            #print("next_state: ")
+            # print(next_state)
 
+            # new_cost = cost_so_far[current_state] + 1
             new_cost = cost_so_far[current_state] + next_state.f
-
+            # new_cost = cost_so_far[current_state] + next_state.f - current_state.h
+            # print(cost_so_far)
             if next_state not in cost_so_far or new_cost < cost_so_far[next_state]:
-                # cost_so_far.update({next_state: new_cost})
                 cost_so_far[next_state] = new_cost
                 frontier.put((new_cost, next_state))
                 came_from[next_state] = current_state
@@ -157,12 +217,12 @@ def read_input_file(file_path):
 def main():
     global capacities
     global target
-    file_path = 'input/input5.txt'  # Adjust this to your file path
+    file_path = 'input/input9.txt'  # Adjust this to your file path
 
     capacities, target = read_input_file(file_path)
+    capacities = sorted(capacities)
     print(capacities)
     print(target)
-    capacities = sorted(capacities)
     initial_state = PitcherState([0] * (len(capacities) + 1), None, 0, target)
     steps = a_star_search(initial_state)
     print(steps)
