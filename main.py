@@ -110,8 +110,8 @@ def a_star_search(initial_state):
             total_steps = current_state.g
             while current_state != initial_state:
                 path.append(current_state)
-                # current_state = current_state.parent
-                current_state = came_from[current_state]
+                current_state = current_state.parent
+                # current_state = came_from[current_state]
                 total_steps += current_state.g
             path.append(initial_state)
             path.reverse()
@@ -127,7 +127,7 @@ def a_star_search(initial_state):
             if next_state not in cost_so_far or new_cost < cost_so_far[next_state]:
                 cost_so_far[next_state] = new_cost
                 frontier.put((new_cost, next_state))
-                came_from[next_state] = current_state
+                # came_from[next_state] = current_state
 
     return -1
 
@@ -141,7 +141,7 @@ def read_input_file(file_path):
 def main():
     global capacities
     global target
-    file_path = 'input/input9.txt'  # Adjust this to your file path
+    file_path = 'input/input.txt'  # Adjust this to your file path
 
     capacities, target = read_input_file(file_path)
     capacities = sorted(capacities)
