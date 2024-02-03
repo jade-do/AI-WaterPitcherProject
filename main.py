@@ -36,13 +36,8 @@ class PitcherState:
             # Fill jug i
             new_pitchers = self.pitchers.copy()
             if new_pitchers[i] == 0:
-                # print("1a. new_pitchers")
-                # print(new_pitchers)
                 new_pitchers[i] = capacities[i]
-                # print("1b. new_pitchers")
-                # print(new_pitchers)
                 successors.append(PitcherState(new_pitchers, self, 1, self.heuristic(new_pitchers)))
-                # print("in here 1")
 
         # Operation 2: Empty jug[i] into infinite_pitcher
 
@@ -97,7 +92,7 @@ def print_path(path):
 def a_star_search(initial_state):
     frontier = PriorityQueue()
     frontier.put((0, initial_state))
-    came_from = {initial_state: None}
+    # came_from = {initial_state: None}
     cost_so_far = {initial_state: 0}
 
     while not frontier.empty():
@@ -123,7 +118,6 @@ def a_star_search(initial_state):
             # new_cost = cost_so_far[current_state] + 1
             new_cost = cost_so_far[current_state] + next_state.f
             # new_cost = cost_so_far[current_state] + next_state.f - current_state.h
-            # print(cost_so_far)
             if next_state not in cost_so_far or new_cost < cost_so_far[next_state]:
                 cost_so_far[next_state] = new_cost
                 frontier.put((new_cost, next_state))
@@ -138,11 +132,9 @@ def read_input_file(file_path):
         target = int(lines[1].strip())
     return capacities, target
 
-def main():
+def start_search(file_path):
     global capacities
     global target
-    file_path = 'input/input.txt'  # Adjust this to your file path
-
     capacities, target = read_input_file(file_path)
     capacities = sorted(capacities)
     print(capacities)
@@ -150,6 +142,12 @@ def main():
     initial_state = PitcherState([0] * (len(capacities) + 1), None, 0, target)
     steps = a_star_search(initial_state)
     print(steps)
+    return steps
+
+def main():
+    file_path = 'input/input.txt'  # Adjust this to your file path
+    start_search(file_path)
+
 
 if __name__ == "__main__":
     main()
