@@ -28,6 +28,26 @@ class TestAStarSearch(unittest.TestCase):
         # assert start_search(file_path) == 37, "Should be 37"
         self.assertEqual(start_search(file_path), 37)
 
+    def test_input_5(self):
+        file_path = 'input/input5.txt'
+        self.assertEqual(start_search(file_path), 6)
+
+    def test_input_6(self):
+        file_path = 'input/input6.txt'
+        self.assertEqual(start_search(file_path), 4)
+
+    def test_input_7(self):
+        file_path = 'input/input7.txt'
+        self.assertEqual(start_search(file_path), 7)
+
+    def test_input_8(self):
+        file_path = 'input/input8.txt'
+        self.assertEqual(start_search(file_path), 3)
+
+    def test_input_9(self):
+        file_path = 'input/input9.txt'
+        self.assertEqual(start_search(file_path), 25)
+
 if __name__ == "__main__":
     unittest.main()
 

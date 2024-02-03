@@ -86,8 +86,7 @@ class PitcherState:
 def print_path(path):
 
     for p in path:
-        print(p)
-        print("->")
+        print(f"-> {p}")
 
 def a_star_search(initial_state):
     frontier = PriorityQueue()
@@ -100,7 +99,7 @@ def a_star_search(initial_state):
 
         if current_state.is_goal():
             # Reconstruct path
-            print("Found goal! \n Path is: \n")
+            print("Found goal! Path is:")
             path = []
             total_steps = current_state.g
             while current_state != initial_state:
@@ -123,6 +122,7 @@ def a_star_search(initial_state):
                 frontier.put((new_cost, next_state))
                 # came_from[next_state] = current_state
 
+    print("No path!")
     return -1
 
 def read_input_file(file_path):
@@ -137,8 +137,8 @@ def start_search(file_path):
     global target
     capacities, target = read_input_file(file_path)
     capacities = sorted(capacities)
-    print(capacities)
-    print(target)
+    print(f'Capacities: {", ".join(map(str, capacities))}')
+    print(f'Target: {str(target)}')
     initial_state = PitcherState([0] * (len(capacities) + 1), None, 0, target)
     steps = a_star_search(initial_state)
     print(steps)
